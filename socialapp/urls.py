@@ -29,7 +29,8 @@ v1_api.register(UserResource())
 v1_api.register(CreateUserResource())
 v1_api.register(AllProfileResource())
 v1_api.register(MyProfileResource())
-v1_api.register(LoginResource())
+# v1_api.register(LoginResource())
+v1_api.register(LogoutResource())
 
 #register api : post
 v1_api.register(PostByUserResource())
