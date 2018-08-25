@@ -25,7 +25,7 @@ SECRET_KEY = 'ma-*g+k0$rl2t6h3mxurh%hm*+7z^dx)2jus+n8z(1(s=gl!i3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['social-app-gaga2017.c9users.io']
+ALLOWED_HOSTS = ['social-app-gaga2017.c9users.io','127.0.0.1']
 
 
 # Application definition

@@ -23,64 +23,97 @@ class UserResource(ModelResource):
         authorization = Authorization()
         excludes = ["password"]
         allowed_methods = ["get","post","put"]
-        authentication = Authentication()
+        authentication = DjangoAuthorization()
     
-    
-#create profie( = user + other information of user) 
+ 
 class CreateUserResource(ModelResource):
+    """
+    create profie( = user + other information of user)
+    """
+    
     user = tastypie.fields.ForeignKey(UserResource, 'user', full=True)
     
     class Meta:
         queryset = Profile.objects.all()
-        resource_name = 'account'
+        resource_name = 'create_account'
         allowed_methods =["post"]
-        authorization = Authorization() 
+        authorization = Authorization()
         #return json  when create user
-        always_return_data = True   
+        always_return_data = True
     
    
-#see profile of users  and update profile
-class ProfileResource(ModelResource):
+
+class AllProfileResource(ModelResource):
+    """
+    see all profile
+    """
+    
     user = tastypie.fields.ForeignKey(UserResource, 'user', full=True)
     class Meta:
         queryset = Profile.objects.all()
-        resource_name = 'profile'
+        resource_name = 'all_profile'
         allowed_methods =["get","put"]
         authentication = ApiKeyAuthentication()
         authorization = Authorization()
         always_return_data = True 
     
-    def authorized_read_list(self, object_list, bundle):
-        return object_list.filter(id=bundle.request.user.id).select_related()
     
-    #     kwargs["pk"] = request.user.profile.pk
-    #     return super(UpdateProfileResource, self).get_detail(request, **kwargs)
 
 
-#login return data of user and api_key(use for other request after login)
+class MyProfileResource(ModelResource):
+    """
+    see and update my profile
+    """
+    
+    user = tastypie.fields.ForeignKey(UserResource, 'user', full=True)
+    class Meta:
+        queryset = Profile.objects.all()
+        resource_name = 'my_profile' 
+        allowed_methods =["get","put"]
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+        always_return_data = True 
+    
+    def get_list(self, request, **kwargs):
+        kwargs["pk"] = request.user.profile.pk
+        return super(MyProfileResource, self).get_detail(request, **kwargs)
+
+
 class LoginResource(ModelResource):
+    """
+    login return data of user and api_key(use for other request after login)
+    """
+    
     class Meta:
         queryset = User.objects.all()
         resource_name = 'login'
-        allowed_methods = ['get',"delete","post"]
+        allowed_methods = ['get','delete']
         excludes = [ 'password']
-        authentication = BasicAuthentication()
-        
+        authentication = MultiAuthentication(ApiKeyAuthentication(),BasicAuthentication())
+        filtering = {
+            'slug': 'ALL',
+            'user': 'ALL',
+            # 'created': ['exact', 'range', 'gt', 'gte', 'lt', 'lte'],
+        }    
     
-    #return data of user and api_key
+    
     def dehydrate(self, bundle):
+        """
+        return data of user and api_key
+        """
         print(bundle.obj.api_key)
-        bundle.data['key'] = bundle.obj.api_key.key
+        bundle.data['api_key'] = bundle.obj.api_key.key
         return bundle
     
     
-    ## Since there is only one user profile object, call get_detail instead
+    
     def get_list(self, request, **kwargs):
+        """
+        Since there is only one user profile object, call get_detail instead
+        """
         print(request.user.profile)
         kwargs["pk"] = request.user.id
         return super(LoginResource, self).get_detail(request, **kwargs)
-    
-   
     
     def logout(self, request, **kwargs):
         """

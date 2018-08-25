@@ -27,13 +27,14 @@ from tastypie.api import Api
 v1_api = Api(api_name='v1')
 v1_api.register(UserResource())
 v1_api.register(CreateUserResource())
-v1_api.register(ProfileResource())
+v1_api.register(AllProfileResource())
+v1_api.register(MyProfileResource())
 v1_api.register(LoginResource())
 
 #register api : post
 v1_api.register(PostByUserResource())
 v1_api.register(AllPostsResource())
-v1_api.register(ListPostByUserResource())
+v1_api.register(ListPostByOtherUserResource())
 
 #register api : friend
 v1_api.register(FriendRequestResource())

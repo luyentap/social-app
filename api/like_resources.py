@@ -16,14 +16,19 @@ from api.post_resources import *
 from api.autho_custom import PostObjectsOnlyAuthorization,UserObjectsOnlyAuthorization,LikeObjectsOnlyAuthorization
 
 
-#only like one 
+
 class LikePostResource(ModelResource):
+    """
+        liked post, unliked
+    
+    """
+    
     liker = tastypie.fields.ForeignKey(UserResource, 'liker')
     post = tastypie.fields.ForeignKey(AllPostsResource,'post')
     class Meta:
         queryset = Like.objects.all()
         resource_name = "like"
-        allowed_methods = ["get","post","put","delete"]
+        allowed_methods = ["get","post","delete"]
         authentication = ApiKeyAuthentication()
         authorization = LikeObjectsOnlyAuthorization()
         always_return_data = True
@@ -39,10 +44,11 @@ class LikePostResource(ModelResource):
         
         return super(LikePostResource,self).obj_create(bundle,**kwargs)
     
-    
-    #when unlike , decreate number like in post
-    #da unlike, giam so luong nhưng return thong bao loi???
     def obj_delete(self, bundle, **kwargs):
+        """
+        when unlike , decreate number like in post
+        da unlike, giam so luong nhung return thong bao loi???
+        """
         #get id like --> like -->posst
         id_like= bundle.request.resolver_match.kwargs["pk"]
         # post = bundle.request.path
@@ -56,8 +62,13 @@ class LikePostResource(ModelResource):
         return super(LikePostResource,self).obj_create(bundle,**kwargs)
     
 
-#get people like in a post
+
 class AllLikeInPostResource(ModelResource):
+    """
+        get people like in a post
+        example :  api/v1/post/<post_id>/all_like 
+                   api/v1/post/1/all_like
+    """
     liker = tastypie.fields.ForeignKey(UserResource, 'liker')
     post = tastypie.fields.ForeignKey(AllPostsResource,'post')
     class Meta:

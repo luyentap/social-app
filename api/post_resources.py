@@ -14,8 +14,12 @@ from django.db import IntegrityError
 from api.account_resources import *
 from api.autho_custom import PostObjectsOnlyAuthorization
 
-# get all post of user: get,update,delete,create
+
 class PostByUserResource(ModelResource):
+    """
+        User can: create post, update and delelte
+                  also see all post of user
+    """
     author = tastypie.fields.ForeignKey(UserResource, 'author')
     class Meta:
         resource_name = 'my_post'
@@ -26,8 +30,13 @@ class PostByUserResource(ModelResource):
         always_return_data = True
 
         
-#get all post (show in wall)
+
 class AllPostsResource(ModelResource):
+    """
+    get all post (show in wall)
+    and use it in other resources
+    """
+    
     author = tastypie.fields.ForeignKey(UserResource, 'author',full=True)
     class Meta:
         resource_name = 'all_post'
@@ -36,8 +45,14 @@ class AllPostsResource(ModelResource):
         authentication = ApiKeyAuthentication()
         
         
-#Get to list post by other user
-class ListPostByUserResource(ModelResource):
+
+class ListPostByOtherUserResource(ModelResource):
+    """
+    Get to list post by other user
+        example: api/v1/list_post/user/12 --> list post of user id=12
+    
+    """
+    
     author = tastypie.fields.ForeignKey(UserResource, 'author')
     class Meta:
         resource_name = 'list_post'
@@ -63,4 +78,4 @@ class ListPostByUserResource(ModelResource):
         return object_list.filter(author=id_user).select_related()
     
     def get_list(self, request, **kwargs):
-        return super(ListPostByUserResource, self).get_list(request, **kwargs)
+        return super(ListPostByOtherUserResource, self).get_list(request, **kwargs)

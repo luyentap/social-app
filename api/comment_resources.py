@@ -16,8 +16,13 @@ from api.post_resources import *
 from api.autho_custom import CommentObjectsOnlyAuthorization
 
 
-# comment in a post
+
 class CommentInPostResource(ModelResource):
+    """
+    comment in a post:
+        create comment, update and delete
+    
+    """
     commenter = tastypie.fields.ForeignKey(UserResource, 'commenter')
     post = tastypie.fields.ForeignKey(AllPostsResource,'post',full=True)
     class Meta:
@@ -28,8 +33,11 @@ class CommentInPostResource(ModelResource):
         authorization = CommentObjectsOnlyAuthorization()
         always_return_data = True
         
-    #when comment , increate number comment in post
+    
     def obj_create(self, bundle, **kwargs):
+        """
+        when comment , increate number comment in post
+        """
         post = bundle.data["post"]
         id_post = post.split("/")[4]
         
@@ -40,8 +48,10 @@ class CommentInPostResource(ModelResource):
         return super(CommentInPostResource,self).obj_create(bundle,**kwargs)
     
     
-    #when delete comment , decreate number comment in post
     def obj_delete(self, bundle, **kwargs):
+        """
+        when delete comment , decreate number comment in post
+        """
         #get id comment --> comment -->posst
         id_comment= bundle.request.resolver_match.kwargs["pk"]
         # post = bundle.request.path
@@ -57,8 +67,15 @@ class CommentInPostResource(ModelResource):
         return super(CommentInPostResource,self).obj_create(bundle,**kwargs)
     
 
-#get people comment in a post
+
 class AllCommentInPostResource(ModelResource):
+    """
+    get people comment in a post 
+    example :  api/v1/post/<post_id>/all_comment 
+               api/v1/post/1/all_comment 
+        
+    """
+    
     commenter = tastypie.fields.ForeignKey(UserResource, 'commenter')
     post = tastypie.fields.ForeignKey(AllPostsResource,'post')
     class Meta:
