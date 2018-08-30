@@ -12,7 +12,7 @@ from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 #fix import with python3
 from api.account_resources import *
-from api.autho_custom import PostObjectsOnlyAuthorization,UserObjectsOnlyAuthorization
+from api.authentication_custom import PostObjectsOnlyAuthorization,UserObjectsOnlyAuthorization
 
 #get all
 #request --> add(user and other user)
